@@ -21,7 +21,7 @@ from sklearn.base import BaseEstimator
 from sklearn.base import RegressorMixin, TransformerMixin, ClassifierMixin
 from sklearn.exceptions import NotFittedError
 from sklearn.utils import compute_sample_weight
-from sklearn.utils.validation import check_array, _check_sample_weight
+from sklearn.utils.validation import check_array,_check_sample_weight,validate_data
 from sklearn.utils.multiclass import check_classification_targets
 
 from ._program import _Program
@@ -289,7 +289,8 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
             sample_weight = _check_sample_weight(sample_weight, X)
 
         if isinstance(self, ClassifierMixin):
-            X, y = self._validate_data(X, y, y_numeric=False)
+            # X, y = self._validate_data(X, y, y_numeric=False)
+            X, y = validate_data(self,X, y, y_numeric=False)
             check_classification_targets(y)
 
             if self.class_weight:
@@ -309,7 +310,8 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
             self.n_classes_ = len(self.classes_)
 
         else:
-            X, y = self._validate_data(X, y, y_numeric=True)
+            # X, y = self._validate_data(X, y, y_numeric=True)
+            X, y = validate_data(self,X, y, y_numeric=True)
 
         hall_of_fame = self.hall_of_fame
         if hall_of_fame is None:
