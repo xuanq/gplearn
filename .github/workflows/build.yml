@@ -34,16 +34,17 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python_version }}
+    - name: Install uv
+      run: pip install uv
     - name: Install global dependencies
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install pytest pytest-cov coveralls
-        python -m pip install pandas
+        uv pip install pytest pytest-cov coveralls
+        uv pip install pandas
     - name: Install minimal dependencies
       if: ${{ matrix.python_version == '3.8' }}
-      run: python -m pip install scikit-learn==1.0.2 joblib==1.0.0
+      run: uv pip install scikit-learn==1.0.2 joblib==1.0.0
     - name: Install gplearn
-      run: python -m pip install .
+      run: uv pip install .
     - name: Describe Python environment
       run: |
         python --version
