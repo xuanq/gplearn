@@ -9,7 +9,7 @@ import pickle
 import numpy as np
 from sklearn.datasets import load_diabetes, load_breast_cancer
 from sklearn.metrics import mean_absolute_error
-from sklearn.utils._testing import assert_raises
+import pytest
 from sklearn.utils.validation import check_random_state
 
 from gplearn.genetic import SymbolicRegressor, SymbolicClassifier
@@ -35,16 +35,16 @@ def test_validate_fitness():
     # Check arg count checks
     _ = make_fitness(function=_mean_square_error, greater_is_better=True)
     # non-bool greater_is_better
-    assert_raises(ValueError,
+    pytest.raises(ValueError,
                   make_fitness,
                   function=_mean_square_error,
                   greater_is_better='Sure')
-    assert_raises(ValueError,
+    pytest.raises(ValueError,
                   make_fitness,
                   function=_mean_square_error,
                   greater_is_better=1)
     # non-bool wrap
-    assert_raises(ValueError,
+    pytest.raises(ValueError,
                   make_fitness,
                   function=_mean_square_error,
                   greater_is_better=True, wrap='f')
@@ -52,7 +52,7 @@ def test_validate_fitness():
     # Check arg count tests
     def bad_fun1(x1, x2):
         return 1.0
-    assert_raises(ValueError,
+    pytest.raises(ValueError,
                   make_fitness,
                   function=bad_fun1,
                   greater_is_better=True)
@@ -60,7 +60,7 @@ def test_validate_fitness():
     # Check return type tests
     def bad_fun2(x1, x2, w):
         return 'ni'
-    assert_raises(ValueError,
+    pytest.raises(ValueError,
                   make_fitness,
                   function=bad_fun2,
                   greater_is_better=True)
@@ -211,11 +211,11 @@ def test_parallel_custom_metric():
                             random_state=0,
                             n_jobs=2)
     est.fit(diabetes.data, diabetes.target)
-    assert_raises(AttributeError, pickle.dumps, est)
+    pytest.raises(AttributeError, pickle.dumps, est)
 
     # Single threaded will also fail in non-interactive sessions
     est = SymbolicRegressor(generations=2,
                             metric=custom_metric,
                             random_state=0)
     est.fit(diabetes.data, diabetes.target)
-    assert_raises(AttributeError, pickle.dumps, est)
+    pytest.raises(AttributeError, pickle.dumps, est)
