@@ -344,7 +344,7 @@ class _Program(object):
 
         Parameters
         ----------
-        X : {array-like}, shape = [n_samples, n_features]
+        X : {array-like}, shape = [n_samples, n_features, otherdims]
             Training vectors, where n_samples is the number of samples and
             n_features is the number of features.
 
@@ -357,9 +357,9 @@ class _Program(object):
         # Check for single-node programs
         node = self.program[0]
         if isinstance(node, float):
-            return np.tile(node, X.shape[:-1])
+            return np.tile(node, X[:, 0, ...].shape)
         if isinstance(node, int):
-            return X[..., node]
+            return X[:, node, ...]
 
         apply_stack = []
 
@@ -374,8 +374,8 @@ class _Program(object):
             while len(apply_stack[-1]) == apply_stack[-1][0].arity + 1:
                 # Apply functions that have sufficient arguments
                 function = apply_stack[-1][0]
-                terminals = [np.tile(t, X.shape[:-1]) if isinstance(t, float)
-                             else X[..., t] if isinstance(t, int)
+                terminals = [np.tile(t, X[:, 0, ...].shape) if isinstance(t, float)
+                             else X[:, t, ...] if isinstance(t, int)
                              else t for t in apply_stack[-1][1:]]
                 intermediate_result = function(*terminals)
                 if len(apply_stack) != 1:
